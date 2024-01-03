@@ -75,7 +75,7 @@ for tag in $tags; do
 				runs: {
 					build: (
 						[
-							# https://github.com/docker-library/bashbrew/pull/43
+							# https://github.com/khulnasoft/bashbrew/pull/43
 							if .builder == "classic" or .builder == "" then
 								"DOCKER_BUILDKIT=0 docker build"
 							elif .builder == "buildkit" then
@@ -109,7 +109,7 @@ for tag in $tags; do
 					test: (
 						[
 							"set -- " + (.tags[0] | @sh),
-							# https://github.com/docker-library/bashbrew/issues/46#issuecomment-1152567694 (allow local test config / tests)
+							# https://github.com/khulnasoft/bashbrew/issues/46#issuecomment-1152567694 (allow local test config / tests)
 							"if [ -s ./.test/config.sh ]; then set -- --config ~/oi/test/config.sh --config ./.test/config.sh \"$@\"; fi",
 							"~/oi/test/run.sh \"$@\""
 						] | join("\n")
@@ -195,9 +195,9 @@ strategy="$(
 					"git clone --depth 1 https://github.com/docker-library/official-images.git -b master ~/oi",
 
 					(
-						"# https://github.com/docker-library/bashbrew/pull/43",
+						"# https://github.com/khulnasoft/bashbrew/pull/43",
 						if ([ .meta.entries[].builder ] | index("buildkit")) then
-							# https://github.com/docker-library/bashbrew/pull/70#issuecomment-1461033890 (we need to _not_ set BASHBREW_ARCH here)
+							# https://github.com/khulnasoft/bashbrew/pull/70#issuecomment-1461033890 (we need to _not_ set BASHBREW_ARCH here)
 							"if [ -x ~/oi/.bin/bashbrew-buildkit-env-setup.sh ]; then",
 							"\t# https://github.com/docker-library/official-images/pull/14212",
 							"\tbuildkitEnvs=\"$(~/oi/.bin/bashbrew-buildkit-env-setup.sh)\"",

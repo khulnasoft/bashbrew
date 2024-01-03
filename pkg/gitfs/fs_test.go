@@ -5,7 +5,7 @@ import (
 	"testing"
 	// TODO "testing/fstest"
 
-	"github.com/docker-library/bashbrew/pkg/gitfs"
+	"github.com/khulnasoft/bashbrew/pkg/gitfs"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/storage/memory"

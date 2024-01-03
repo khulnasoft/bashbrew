@@ -140,7 +140,7 @@ func cmdBuild(c *cli.Context) error {
 
 				if !dryRun {
 					if cachedDesc == nil {
-						// https://github.com/docker-library/bashbrew/pull/61#discussion_r1044926620
+						// https://github.com/khulnasoft/bashbrew/pull/61#discussion_r1044926620
 						// abusing "docker build" for "tag something a lot of times, but efficiently" 👀
 						err := dockerBuild(imageTags, "", strings.NewReader("FROM "+cacheTag), "")
 						if err != nil {

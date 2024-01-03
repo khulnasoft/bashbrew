@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/docker-library/bashbrew/manifest"
+	"github.com/khulnasoft/bashbrew/manifest"
 
 	"github.com/urfave/cli"
 )

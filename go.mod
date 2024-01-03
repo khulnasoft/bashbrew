@@ -1,4 +1,4 @@
-module github.com/docker-library/bashbrew
+module github.com/khulnasoft/bashbrew
 
 go 1.20
 

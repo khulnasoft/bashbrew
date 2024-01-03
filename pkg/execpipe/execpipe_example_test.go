@@ -6,7 +6,7 @@ import (
 	"io"
 	"strings"
 
-	"github.com/docker-library/bashbrew/pkg/execpipe"
+	"github.com/khulnasoft/bashbrew/pkg/execpipe"
 )
 
 func Example() {

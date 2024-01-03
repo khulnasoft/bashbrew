@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/docker-library/bashbrew/pkg/stripper"
+	"github.com/khulnasoft/bashbrew/pkg/stripper"
 )
 
 func ExampleCommentStripper() {

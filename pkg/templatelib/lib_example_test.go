@@ -4,7 +4,7 @@ import (
 	"os"
 	"text/template"
 
-	"github.com/docker-library/bashbrew/pkg/templatelib"
+	"github.com/khulnasoft/bashbrew/pkg/templatelib"
 )
 
 func Example_prefixSuffix() {

@@ -10,7 +10,7 @@ import (
 	"os/exec"
 	"path"
 
-	"github.com/docker-library/bashbrew/registry"
+	"github.com/khulnasoft/bashbrew/registry"
 
 	imagespec "github.com/opencontainers/image-spec/specs-go/v1"
 	// thanks, go-digest...
