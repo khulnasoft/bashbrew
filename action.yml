@@ -1,6 +1,6 @@
 # steps:
 #   - ...
-#   - uses: docker-library/bashbrew
+#   - uses: khulnasoft/bashbrew
 #   - ...
 
 name: 'Install Bashbrew'

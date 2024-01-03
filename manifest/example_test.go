@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/docker-library/bashbrew/manifest"
+	"github.com/khulnasoft/bashbrew/manifest"
 )
 
 func Example() {

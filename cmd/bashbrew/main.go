@@ -9,8 +9,8 @@ import (
 	"github.com/sirupsen/logrus" // this is used by containerd libraries, so we need to set the default log level for it
 	"github.com/urfave/cli"
 
-	"github.com/docker-library/bashbrew/architecture"
-	"github.com/docker-library/bashbrew/manifest"
+	"github.com/khulnasoft/bashbrew/architecture"
+	"github.com/khulnasoft/bashbrew/manifest"
 )
 
 // TODO somewhere, ensure that the Docker engine we're talking to is API version 1.22+ (Docker 1.10+)

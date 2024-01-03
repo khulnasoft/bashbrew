@@ -14,9 +14,9 @@ import (
 
 	"github.com/urfave/cli"
 
-	"github.com/docker-library/bashbrew/manifest"
-	"github.com/docker-library/bashbrew/pkg/execpipe"
-	"github.com/docker-library/bashbrew/pkg/gitfs"
+	"github.com/khulnasoft/bashbrew/manifest"
+	"github.com/khulnasoft/bashbrew/pkg/execpipe"
+	"github.com/khulnasoft/bashbrew/pkg/gitfs"
 
 	goGit "github.com/go-git/go-git/v5"
 	goGitConfig "github.com/go-git/go-git/v5/config"

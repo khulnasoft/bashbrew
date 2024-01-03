@@ -1,6 +1,6 @@
 # Bashbrew (`bashbrew`)
 
-[![Jenkins Build Status](https://doi-janky.infosiftr.net/job/bashbrew/job/master/badge/icon?subject=Jenkins)](https://doi-janky.infosiftr.net/job/bashbrew/job/master/) [![GitHub CI](https://github.com/docker-library/bashbrew/workflows/GitHub%20CI/badge.svg?branch=master&event=push)](https://github.com/docker-library/bashbrew/actions?query=workflow%3A%22GitHub+CI%22)
+[![Jenkins Build Status](https://doi-janky.infosiftr.net/job/bashbrew/job/master/badge/icon?subject=Jenkins)](https://doi-janky.infosiftr.net/job/bashbrew/job/master/) [![GitHub CI](https://github.com/khulnasoft/bashbrew/workflows/GitHub%20CI/badge.svg?branch=master&event=push)](https://github.com/khulnasoft/bashbrew/actions?query=workflow%3A%22GitHub+CI%22)
 
 ```console
 $ bashbrew --help
