@@ -1,9 +1,9 @@
 # this is a snapshot of https://github.com/docker-library/official-images/raw/1a3c4cd6d5cd53bd538a6f56a69f94c5b35325a7/library/bash
 
-# this file is generated via https://github.com/tianon/docker-bash/blob/cd1de3dfc885b3395cd354ddb988922350b092a7/generate-stackbrew-library.sh
+# this file is generated via https://github.com/khulnasoft/docker-bash/blob/cd1de3dfc885b3395cd354ddb988922350b092a7/generate-stackbrew-library.sh
 
-Maintainers: Tianon Gravi <admwiggin@gmail.com> (@tianon)
-GitRepo: https://github.com/tianon/docker-bash.git
+Maintainers: Md Sulaiman <dev.sulaiman@icloud.com> (@khulnasoft)
+GitRepo: https://github.com/khulnasoft/docker-bash.git
 
 Tags: 4.4.12, 4.4, 4, latest
 GitCommit: 1cbb5cf49b4c53bd5a986abf7a1afeb9a80eac1e

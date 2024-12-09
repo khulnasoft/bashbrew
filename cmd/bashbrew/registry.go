@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/khulnasoft/bashbrew/registry"
+	"github.com/docker-library/bashbrew/registry"
 )
 
 var registryImageIdsCache = map[string][]string{}

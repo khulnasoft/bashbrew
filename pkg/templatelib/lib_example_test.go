@@ -4,7 +4,7 @@ import (
 	"os"
 	"text/template"
 
-	"github.com/khulnasoft/bashbrew/pkg/templatelib"
+	"github.com/docker-library/bashbrew/pkg/templatelib"
 )
 
 func Example_prefixSuffix() {
@@ -218,4 +218,18 @@ func Example_getenv() {
 	// BAR: not set
 	// BAZ: foobar
 	// FOOBARBAZ
+}
+
+func Example_sha256sum() {
+	tmpl, err := template.New("sha256sum").Funcs(templatelib.FuncMap).Parse(`
+		{{- "Hello World!" | sha256sum -}}
+	`)
+
+	err = tmpl.Execute(os.Stdout, nil)
+	if err != nil {
+		panic(err)
+	}
+
+	// Output:
+	// 7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069
 }

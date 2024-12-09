@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/khulnasoft/bashbrew/manifest"
+	"github.com/docker-library/bashbrew/manifest"
 )
 
 func TestFetchErrors(t *testing.T) {

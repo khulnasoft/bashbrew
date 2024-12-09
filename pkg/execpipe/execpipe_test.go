@@ -5,7 +5,7 @@ import (
 	"os/exec"
 	"testing"
 
-	"github.com/khulnasoft/bashbrew/pkg/execpipe"
+	"github.com/docker-library/bashbrew/pkg/execpipe"
 )
 
 func TestStdoutPipeError(t *testing.T) {

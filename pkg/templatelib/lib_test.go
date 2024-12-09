@@ -6,7 +6,7 @@ import (
 	"text/template"
 	"unsafe"
 
-	"github.com/khulnasoft/bashbrew/pkg/templatelib"
+	"github.com/docker-library/bashbrew/pkg/templatelib"
 )
 
 func TestTernaryPanic(t *testing.T) {

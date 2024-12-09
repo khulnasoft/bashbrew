@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/khulnasoft/bashbrew/pkg/stripper"
+	"github.com/docker-library/bashbrew/pkg/stripper"
 	"github.com/urfave/cli"
 	"pault.ag/go/debian/control"
 )

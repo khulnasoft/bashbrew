@@ -3,7 +3,7 @@ package architecture_test
 import (
 	"testing"
 
-	"github.com/khulnasoft/bashbrew/architecture"
+	"github.com/docker-library/bashbrew/architecture"
 
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 )

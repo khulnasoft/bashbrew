@@ -13,14 +13,21 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/khulnasoft/bashbrew/manifest"
+	"github.com/docker-library/bashbrew/manifest"
 	"github.com/urfave/cli"
 )
 
+type dockerfileStage struct {
+	From      string // image name (or parent stage's image name, if "FROM stage-name")
+	FromStage string // original stage name, if "FROM stage-name"
+	Name      string // empty for unnamed stages
+	Platform  string // empty string, $BUILDPLATFORM, or $TARGETPLATFORM
+	// TODO somehow, we need to expose the platform of each stage to meta-scripts so it can know that, for example, the build stage base image is only needed for the *host* platform, not the target platform
+}
+
 type dockerfileMetadata struct {
-	StageFroms     []string          // every image "FROM" instruction value (or the parent stage's FROM value in the case of a named stage)
-	StageNames     []string          // the name of any named stage (in order)
-	StageNameFroms map[string]string // map of stage names to FROM values (or the parent stage's FROM value in the case of a named stage), useful for resolving stage names to FROM values
+	Stages      []dockerfileStage
+	NamedStages map[string]int // map of stage names to index in Stages slice
 
 	Froms []string // every "FROM" or "COPY --from=xxx" value (minus named and/or numbered stages in the case of "--from=")
 }
@@ -31,7 +38,7 @@ func (r Repo) ArchLastStageFrom(arch string, entry *manifest.Manifest2822Entry) 
 	if err != nil {
 		return "", err
 	}
-	return dockerfileMeta.StageFroms[len(dockerfileMeta.StageFroms)-1], nil
+	return dockerfileMeta.Stages[len(dockerfileMeta.Stages)-1].From, nil
 }
 
 func (r Repo) DockerFroms(entry *manifest.Manifest2822Entry) ([]string, error) {
@@ -55,9 +62,8 @@ var dockerfileMetadataCache = map[string]*dockerfileMetadata{}
 func (r Repo) archDockerfileMetadata(arch string, entry *manifest.Manifest2822Entry) (*dockerfileMetadata, error) {
 	if builder := entry.ArchBuilder(arch); builder == "oci-import" {
 		return &dockerfileMetadata{
-			Froms: []string{
-				"scratch",
-			},
+			Stages: []dockerfileStage{{From: "scratch"}},
+			Froms:  []string{"scratch"},
 		}, nil
 	}
 
@@ -93,7 +99,7 @@ func (r Repo) archDockerfileMetadata(arch string, entry *manifest.Manifest2822En
 func parseDockerfileMetadata(dockerfile string) (*dockerfileMetadata, error) {
 	meta := &dockerfileMetadata{
 		// panic: assignment to entry in nil map
-		StageNameFroms: map[string]string{},
+		NamedStages: map[string]int{},
 		// (nil slices work fine)
 	}
 
@@ -130,51 +136,76 @@ func parseDockerfileMetadata(dockerfile string) (*dockerfileMetadata, error) {
 			continue
 		}
 		instruction := strings.ToUpper(fields[0])
-
-		// TODO balk at ARG / $ in from values
+		args := fields[1:]
 
 		switch instruction {
 		case "FROM":
-			from := fields[1]
+			var stage dockerfileStage
+			if platform, ok := strings.CutPrefix(args[0], "--platform="); ok {
+				stage.Platform = platform
+				args = args[1:]
+				switch stage.Platform {
+				case "$BUILDPLATFORM", "$TARGETPLATFORM":
+					// explicitly allowed for more efficient cross-compiling (see also condition outside the meta loop to ensure the final stage is either without platform or explicitly --platform=$TARGETPLATFORM)
+				default:
+					return nil, fmt.Errorf("FROM has unsupported --platform=%q -- any --platform must be generic or unspecified for correct dependency calculation", stage.Platform)
+				}
+			}
 
-			if stageFrom, ok := meta.StageNameFroms[from]; ok {
+			stage.From = args[0]
+			args = args[1:]
+
+			if strings.ContainsRune(stage.From, '$') {
+				return nil, fmt.Errorf("FROM %q contains invalid/disallowed character '$' -- explicit FROM values are required for dependency calculation", stage.From)
+			}
+
+			if i, ok := meta.NamedStages[stage.From]; ok {
 				// if this is a valid stage name, we should resolve it back to the original FROM value of that previous stage (we don't care about inter-stage dependencies for the purposes of either tag dependency calculation or tag building -- just how many there are and what external things they require)
-				from = stageFrom
+				parent := meta.Stages[i]
+				if stage.Platform == "" {
+					stage.Platform = parent.Platform
+				} else if stage.Platform != parent.Platform {
+					return nil, fmt.Errorf("FROM %q has --platform=%q but stage %q has --platform=%q", stage.From, stage.Platform, stage.From, parent.Platform)
+				}
+				stage.FromStage = stage.From
+				stage.From = parent.From
+			} else {
+				// make sure to add ":latest" if it's implied
+				stage.From = latestizeRepoTag(stage.From)
 			}
 
-			// make sure to add ":latest" if it's implied
-			from = latestizeRepoTag(from)
-
-			meta.StageFroms = append(meta.StageFroms, from)
-			meta.Froms = append(meta.Froms, from)
-
-			if len(fields) == 4 && strings.ToUpper(fields[2]) == "AS" {
-				stageName := fields[3]
-				meta.StageNames = append(meta.StageNames, stageName)
-				meta.StageNameFroms[stageName] = from
+			i := len(meta.Stages)
+			if len(args) == 2 && strings.ToUpper(args[0]) == "AS" {
+				stage.Name = args[1]
+				meta.NamedStages[stage.Name] = i
 			}
+			meta.Stages = append(meta.Stages, stage)
+
+			meta.Froms = append(meta.Froms, stage.From)
+
+		// TODO somehow include "RUN --mount=type=bind,from=IMAGE,foo=bar" (without too much insanity)
 		case "COPY":
-			for _, arg := range fields[1:] {
+			for _, arg := range args {
 				if !strings.HasPrefix(arg, "--") {
 					// doesn't appear to be a "flag"; time to bail!
 					break
 				}
-				if !strings.HasPrefix(arg, "--from=") {
+				from, ok := strings.CutPrefix(arg, "--from=")
+				if !ok {
 					// ignore any flags we're not interested in
 					continue
 				}
-				from := arg[len("--from="):]
 
-				if stageFrom, ok := meta.StageNameFroms[from]; ok {
+				if i, ok := meta.NamedStages[from]; ok {
 					// see note above regarding stage names in FROM
-					from = stageFrom
-				} else if stageNumber, err := strconv.Atoi(from); err == nil && stageNumber < len(meta.StageFroms) {
+					from = meta.Stages[i].From
+				} else if stageNumber, err := strconv.Atoi(from); err == nil && stageNumber < len(meta.Stages) {
 					// must be a stage number, we should resolve it too
-					from = meta.StageFroms[stageNumber]
+					from = meta.Stages[stageNumber].From
+				} else {
+					// make sure to add ":latest" if it's implied
+					from = latestizeRepoTag(from)
 				}
-
-				// make sure to add ":latest" if it's implied
-				from = latestizeRepoTag(from)
 
 				meta.Froms = append(meta.Froms, from)
 			}
@@ -183,6 +214,15 @@ func parseDockerfileMetadata(dockerfile string) (*dockerfileMetadata, error) {
 	if err := scanner.Err(); err != nil {
 		return nil, err
 	}
+
+	finalStage := meta.Stages[len(meta.Stages)-1]
+	switch finalStage.Platform {
+	case "", "$TARGETPLATFORM":
+		// yay, all is well
+	default:
+		return nil, fmt.Errorf("final stage/FROM (%q) has --platform=%q but must be unspecified or $TARGETPLATFORM", finalStage.From, finalStage.Platform)
+	}
+
 	return meta, nil
 }
 
@@ -333,7 +373,7 @@ func dockerBuildxBuild(tags []string, file string, context io.Reader, platform s
 
 	if buildxBuilder {
 		args = append(args, "--output", "type=oci")
-		// TODO ,annotation.xyz.tianon.foo=bar,annotation-manifest-descriptor.xyz.tianon.foo=bar (for OCI source annotations, which this function doesn't currently have access to)
+		// TODO ,annotation.xyz.khulnasoft.foo=bar,annotation-manifest-descriptor.xyz.khulnasoft.foo=bar (for OCI source annotations, which this function doesn't currently have access to)
 	}
 
 	cmd := exec.Command("docker", args...)

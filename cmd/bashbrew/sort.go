@@ -1,9 +1,11 @@
 package main
 
 import (
-	"github.com/khulnasoft/bashbrew/manifest"
+	"github.com/docker-library/bashbrew/manifest"
 	"pault.ag/go/topsort"
 )
+
+// TODO unify archFilter and applyConstraints handling by pre-filtering the full list of Repo objects such that all that remains are things we should process (thus removing all "if" statements throughout the various loops); re-doing the Architectures and Entries lists to only include ones we should process, etc
 
 func sortRepos(repos []string, applyConstraints bool) ([]string, error) {
 	rs := []*Repo{}
@@ -80,7 +82,7 @@ func sortRepoObjects(rs []*Repo, applyConstraints bool) ([]*Repo, error) {
 		node := r.Identifier()
 		for _, entry := range r.Entries() {
 			// add edges both with and without namespace so sorting still works properly for official images ("bashbrew --namespace amd64 list --build-order wordpress php")
-			// this should be reasonably harmless for other use cases of --namespace but catches things like "tianon/foo -> tianon/bar" and things like "php -> wordpress" equally even if we're building to target a different namespace
+			// this should be reasonably harmless for other use cases of --namespace but catches things like "khulnasoft/foo -> khulnasoft/bar" and things like "php -> wordpress" equally even if we're building to target a different namespace
 			tags := []string{}
 			tags = append(tags, r.Tags("", false, entry)...)
 			tags = append(tags, r.Tags(namespace, false, entry)...)
@@ -103,10 +105,10 @@ func sortRepoObjects(rs []*Repo, applyConstraints bool) ([]*Repo, error) {
 				continue
 			}
 			/*
-			// TODO need archFilter here :(
-			if archFilter && !entry.HasArchitecture(arch) {
-				continue
-			}
+				// TODO need archFilter here :(
+				if archFilter && !entry.HasArchitecture(arch) {
+					continue
+				}
 			*/
 
 			entryArches := []string{arch}

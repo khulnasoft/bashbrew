@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/khulnasoft/bashbrew/registry"
+	"github.com/docker-library/bashbrew/registry"
 
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/urfave/cli"

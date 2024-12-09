@@ -1,6 +1,6 @@
 # Bashbrew (`bashbrew`)
 
-[![Jenkins Build Status](https://doi-janky.infosiftr.net/job/bashbrew/job/master/badge/icon?subject=Jenkins)](https://doi-janky.infosiftr.net/job/bashbrew/job/master/) [![GitHub CI](https://github.com/khulnasoft/bashbrew/workflows/GitHub%20CI/badge.svg?branch=master&event=push)](https://github.com/khulnasoft/bashbrew/actions?query=workflow%3A%22GitHub+CI%22)
+[![Jenkins Build Status](https://doi-janky.infosiftr.net/job/bashbrew/job/master/badge/icon?subject=Jenkins)](https://doi-janky.infosiftr.net/job/bashbrew/job/master/) [![GitHub CI](https://github.com/docker-library/bashbrew/workflows/GitHub%20CI/badge.svg?branch=master&event=push)](https://github.com/docker-library/bashbrew/actions?query=workflow%3A%22GitHub+CI%22)
 
 ```console
 $ bashbrew --help
@@ -33,10 +33,10 @@ GLOBAL OPTIONS:
    --namespace value        a repo namespace to act upon/in [$BASHBREW_NAMESPACE]
    --constraint value       build constraints (see Constraints in Manifest2822Entry) [$BASHBREW_CONSTRAINTS]
    --exclusive-constraints  skip entries which do not have Constraints
-   --arch-namespace value   architecture to push namespace mappings for creating indexes/manifest lists ("arch=namespace" ala "s390x=tianons390x") [$BASHBREW_ARCH_NAMESPACES]
-   --config value           where default "flags" configuration can be overridden more persistently (default: "/home/tianon/.config/bashbrew") [$BASHBREW_CONFIG]
-   --library value          where the bodies are buried (default: "/home/tianon/docker/official-images/library") [$BASHBREW_LIBRARY]
-   --cache value            where the git wizardry is stashed (default: "/home/tianon/.cache/bashbrew") [$BASHBREW_CACHE]
+   --arch-namespace value   architecture to push namespace mappings for creating indexes/manifest lists ("arch=namespace" ala "s390x=khulnasofts390x") [$BASHBREW_ARCH_NAMESPACES]
+   --config value           where default "flags" configuration can be overridden more persistently (default: "/home/khulnasoft/.config/bashbrew") [$BASHBREW_CONFIG]
+   --library value          where the bodies are buried (default: "/home/khulnasoft/docker/official-images/library") [$BASHBREW_LIBRARY]
+   --cache value            where the git wizardry is stashed (default: "/home/khulnasoft/.cache/bashbrew") [$BASHBREW_CACHE]
    --help, -h, -?           show help
    --version, -v            print the version
 ```
@@ -76,12 +76,12 @@ A more complex example:
 # comments are allowed anywhere (and are ignored)
 Library: /mnt/docker/official-images/library
 Cache: /mnt/docker/bashbrew-cache
-Constraints: aufs, docker-1.9, tianon
+Constraints: aufs, docker-1.9, khulnasoft
 ExclusiveConstraints: true
 
 # namespace just "tag" and "push" (not "build")
 Commands: tag, push
-Namespace: tianon
+Namespace: khulnasoft
 
 Commands: list
 ApplyConstraints: true

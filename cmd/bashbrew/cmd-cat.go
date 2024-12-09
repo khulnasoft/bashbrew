@@ -7,9 +7,9 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/khulnasoft/bashbrew/architecture"
-	"github.com/khulnasoft/bashbrew/manifest"
-	"github.com/khulnasoft/bashbrew/pkg/templatelib"
+	"github.com/docker-library/bashbrew/architecture"
+	"github.com/docker-library/bashbrew/manifest"
+	"github.com/docker-library/bashbrew/pkg/templatelib"
 	"github.com/urfave/cli"
 )
 

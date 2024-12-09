@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/khulnasoft/bashbrew/manifest"
+	"github.com/docker-library/bashbrew/manifest"
 )
 
 func Example() {
@@ -147,9 +147,9 @@ func ExampleFetch_local() {
 	// Output:
 	// bash:4.4
 	//
-	// Maintainers: Tianon Gravi <admwiggin@gmail.com> (@tianon)
+	// Maintainers: Md Sulaiman <dev.sulaiman@icloud.com> (@khulnasoft)
 	// Tags: 4.4.12, 4.4, 4, latest
-	// GitRepo: https://github.com/tianon/docker-bash.git
+	// GitRepo: https://github.com/khulnasoft/docker-bash.git
 	// GitCommit: 1cbb5cf49b4c53bd5a986abf7a1afeb9a80eac1e
 	// Directory: 4.4
 }
@@ -167,9 +167,9 @@ func ExampleFetch_remote() {
 	// Output:
 	// bash:4.4
 	//
-	// Maintainers: Tianon Gravi <admwiggin@gmail.com> (@tianon)
+	// Maintainers: Md Sulaiman <dev.sulaiman@icloud.com> (@khulnasoft)
 	// Tags: 4.4.12, 4.4, 4, latest
-	// GitRepo: https://github.com/tianon/docker-bash.git
+	// GitRepo: https://github.com/khulnasoft/docker-bash.git
 	// GitCommit: 1cbb5cf49b4c53bd5a986abf7a1afeb9a80eac1e
 	// Directory: 4.4
 }

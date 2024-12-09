@@ -9,8 +9,8 @@ import (
 
 	"github.com/urfave/cli"
 
-	"github.com/khulnasoft/bashbrew/architecture"
-	"github.com/khulnasoft/bashbrew/manifest"
+	"github.com/docker-library/bashbrew/architecture"
+	"github.com/docker-library/bashbrew/manifest"
 )
 
 var errPutShared404 = fmt.Errorf("nothing to push")

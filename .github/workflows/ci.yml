@@ -18,7 +18,7 @@ jobs:
     name: Build ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: ./ # test our "action.yml" 👀
       - name: Smoke Test
         run: |
@@ -37,22 +37,23 @@ jobs:
     name: Go Test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Go Test
         run: |
           docker build --pull --file Dockerfile.test --tag test .
           docker run --rm test cat coverage.out > coverage.out
-      - name: Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          files: coverage.out
-          fail_ci_if_error: true
-          verbose: true
+      # TODO find a suitable codecov solution that doesn't require privileged access to the org/repo
+      #- name: Codecov
+      #  uses: codecov/codecov-action@v3
+      #  with:
+      #    files: coverage.out
+      #    fail_ci_if_error: true
+      #    verbose: true
   dockerfile:
     name: Test Dockerfile
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Build Dockerfile
         run: |
           docker build --pull .
@@ -60,7 +61,7 @@ jobs:
     name: Test Dockerfile.release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Build Dockerfile.release
         run: |
           docker build --pull --file Dockerfile.release .

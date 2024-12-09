@@ -8,7 +8,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/khulnasoft/bashbrew/manifest"
+	"github.com/docker-library/bashbrew/manifest"
 )
 
 func repos(all bool, args ...string) ([]string, error) {

@@ -9,8 +9,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/khulnasoft/bashbrew/architecture"
-	"github.com/khulnasoft/bashbrew/pkg/stripper"
+	"github.com/docker-library/bashbrew/architecture"
+	"github.com/docker-library/bashbrew/pkg/stripper"
 
 	"pault.ag/go/debian/control"
 )
@@ -595,7 +595,7 @@ func (decoder *decoderWrapper) Decode(entry *Manifest2822Entry) error {
 	}
 }
 
-// https://github.com/khulnasoft/bashbrew/issues/16
+// https://github.com/docker-library/bashbrew/issues/16
 var Parse = Parse2822
 
 func Parse2822(readerIn io.Reader) (*Manifest2822, error) {

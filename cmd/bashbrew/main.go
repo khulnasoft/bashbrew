@@ -3,14 +3,16 @@ package main
 import (
 	"fmt"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 
 	"github.com/sirupsen/logrus" // this is used by containerd libraries, so we need to set the default log level for it
 	"github.com/urfave/cli"
+	xTerm "golang.org/x/term"
 
-	"github.com/khulnasoft/bashbrew/architecture"
-	"github.com/khulnasoft/bashbrew/manifest"
+	"github.com/docker-library/bashbrew/architecture"
+	"github.com/docker-library/bashbrew/manifest"
 )
 
 // TODO somewhere, ensure that the Docker engine we're talking to is API version 1.22+ (Docker 1.10+)
@@ -115,7 +117,7 @@ func main() {
 		cli.StringSliceFlag{
 			Name:   "arch-namespace",
 			EnvVar: flagEnvVars["arch-namespace"],
-			Usage:  `architecture to push namespace mappings for creating indexes/manifest lists ("arch=namespace" ala "s390x=tianons390x")`,
+			Usage:  `architecture to push namespace mappings for creating indexes/manifest lists ("arch=namespace" ala "s390x=khulnasofts390x")`,
 		},
 
 		cli.StringFlag{
@@ -418,6 +420,61 @@ func main() {
 			},
 			Before: subcommandBeforeFactory("fetch"),
 			Action: cmdFetch,
+
+			Category: "plumbing",
+		},
+		{
+			Name:  "context",
+			Usage: "(eventually Dockerfile-filtered) git archive",
+			Flags: []cli.Flag{
+				cli.BoolFlag{
+					Name:  "sha256",
+					Usage: `print sha256 instead of raw tar`,
+				},
+				// TODO "unfiltered" or something for not applying Dockerfile filtering (once that's implemented)
+			},
+			Before: subcommandBeforeFactory("context"),
+			Action: func(c *cli.Context) error {
+				repos, err := repos(false, c.Args()...)
+				if err != nil {
+					return err
+				}
+				if len(repos) != 1 {
+					return fmt.Errorf("'context' expects to act on exactly one architecture of one entry of one repo (got %d repos)", len(repos))
+				}
+
+				r, err := fetch(repos[0])
+				if err != nil {
+					return err
+				}
+
+				// TODO technically something like "hello-world:latest" *could* be relaxed a little if it resolves via architecture to one and only one entry 🤔 (but that's a little hard to implement with the existing internal data structures -- see TODO at the top of "sort.go")
+
+				if r.TagEntry == nil {
+					return fmt.Errorf("'context' expects to act on exactly one architecture of one entry of one repo (no specific entry of %q selected)", r.RepoName)
+				}
+				if len(r.TagEntries) != 1 {
+					return fmt.Errorf("'context' expects to act on exactly one architecture of one entry of one repo (got %d entires)", len(r.TagEntries))
+				}
+
+				if !r.TagEntry.HasArchitecture(arch) {
+					return fmt.Errorf("%q does not include architecture %q", path.Join(namespace, r.RepoName)+":"+r.TagEntry.Tags[0], arch)
+				}
+
+				if c.Bool("sha256") {
+					sum, err := r.ArchGitChecksum(arch, r.TagEntry)
+					if err != nil {
+						return err
+					}
+					fmt.Println(sum)
+					return nil
+				} else {
+					if xTerm.IsTerminal(int(os.Stdout.Fd())) {
+						return fmt.Errorf("cowardly refusing to output a tar to a terminal")
+					}
+					return r.archContextTar(arch, r.TagEntry, os.Stdout)
+				}
+			},
 
 			Category: "plumbing",
 		},

@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/khulnasoft/bashbrew/manifest"
+	"github.com/docker-library/bashbrew/manifest"
 )
 
 func TestParseError(t *testing.T) {

@@ -11,7 +11,7 @@ import (
 	_ "crypto/sha256"
 	_ "crypto/sha512"
 
-	"github.com/khulnasoft/bashbrew/architecture"
+	"github.com/docker-library/bashbrew/architecture"
 
 	"github.com/containerd/containerd/images"
 	"github.com/containerd/containerd/reference/docker"
